@@ -3,15 +3,14 @@ const imageUtils = require('./imageUtils')
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
-const frecuence = process.env.TIMER_MINUTES * 60 * 1000;
-//const frecuence = 10000;
+//const frecuence = process.env.TIMER_MINUTES * 60 * 1000;
+const frecuence = 10000;
 
 let last_value_sell = 0.0;
-let last_value_buy = 0.0;
 
 client.on('ready', () => {
     console.log(`Bot is ready as ${client.user.tag}!!!`);
-    setInterval(getValueDolar, frecuence);
+    setInterval(runBot, frecuence);
 })
 
 async function sendFileMessage() {
@@ -55,28 +54,22 @@ const builderMessage = (dataDolar) => {
 }
 
 
-const CheckValueDolar = (api_value_sell, api_value_buy) => {
-    return last_value_buy == api_value_buy && last_value_sell == api_value_sell
+const CheckValueDolar = (api_value_sell) => {
+    return api_value_sell > last_value_sell;
 }
 
 
-async function getValueDolar() {
+const runBot = async () => {
 
-    await getApiDolarBlue()
-        .then((data) => {
-            if (CheckValueDolar(data.blue.value_sell, data.blue.value_buy)) {
-                sendFileMessage();
-                console.log("Devaluado...");
-            } else {
-                console.log("No devaluado...");
-            }
-            last_value_buy = data.blue.value_buy;
-            last_value_sell = data.blue.value_sell;
-        })
-        .catch((error) => {
-            console.log("Error:" + error);
-        });
+    let data = await getApiDolarBlue();
 
+    if (CheckValueDolar(data.blue.value_sell)) {
+        console.log("Devaluado...");
+        sendFileMessage();
+    }
+    else console.log("No devaluado...");
+
+    last_value_sell = data.blue.value_sell;
 }
 
 
