@@ -1,8 +1,9 @@
-const puppeteer = require('puppeteer');
-const { createCanvas, loadImage } = require('canvas');
-const fs = require('fs');
-const { resolve } = require('path');
-require('dotenv').config()
+import puppeteer from 'puppeteer';
+import { createCanvas, loadImage } from 'canvas';
+import fs from 'fs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 
 const getImageWeb = async () => {
@@ -30,7 +31,7 @@ const getImageWeb = async () => {
 
 }
 
-const builderPath = (pathBase, nameFile) => {
+export const builderPath = (pathBase, nameFile) => {
     return pathBase + nameFile;
 }
 
@@ -69,13 +70,11 @@ const cropImage = async () => {
     await finishBuffer
 }
 
-const getImageDolar = async () => {
+export const getImageDolar = async () => {
     await getImageWeb();
     await cropImage();
 }
 
-
-module.exports = { getImageDolar, builderPath }
 
 
 
